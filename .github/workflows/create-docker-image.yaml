@@ -25,12 +25,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
       -
-        name: Set up GCloud
-        uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        name: Log into Google Cloud
+        uses: google-github-actions/auth@v0
         with:
-          service_account_key: ${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}
-          project_id: ${{ secrets.PROJECT_ID }}
-          export_default_credentials: true
+          credentials_json: '${{ secrets.GOOGLE_CLOUD_CREDENTIALS }}'
+      -
+        name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
       -
         name: Configure Docker to log into GCloud
         run: |
