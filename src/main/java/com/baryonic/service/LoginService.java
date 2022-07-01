@@ -87,7 +87,7 @@ public class LoginService implements Service
         var userInfo = userInfoReq.request(DiscordBasicUserInfo.class)
                                   .await();
 
-        var row = this.dbClient.execute(exec -> exec.get("SELECT `du` FROM `b50_user`.`discord_users` WHERE `du_userid` = ?", Long.parseUnsignedLong(userInfo.id())))
+        var row = this.dbClient.execute(exec -> exec.get("SELECT `du_us_id` FROM `b50_user`.`discord_users` WHERE `du_userid` = ?", Long.parseUnsignedLong(userInfo.id())))
                                .await();
 
         if (row.isEmpty())
@@ -99,7 +99,7 @@ public class LoginService implements Service
         var rowData = row.get();
 
         res.send(ResponseObject.of(new DiscordLoginInfo(
-            rowData.column("du").as(int.class),
+            rowData.column("du_us_id").as(int.class),
             userInfo.id(),
             userInfo.username(),
             userInfo.discriminator(),
