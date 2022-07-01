@@ -1,2 +1,2 @@
-rootProject.name = "botdiril500-backend"
+rootProject.name = "baryonic-auth-backend"
 
