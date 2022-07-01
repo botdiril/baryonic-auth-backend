@@ -38,7 +38,7 @@ jobs:
       -
         name: Configure Docker to log into GCloud
         run: |
-          gcloud auth configure-docker europe-west3-docker
+          gcloud auth configure-docker europe-west3-docker.pkg.dev
       -
         name: Push
         id: docker_build
