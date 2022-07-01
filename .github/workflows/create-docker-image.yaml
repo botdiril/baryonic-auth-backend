@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       -
         name: Checkout
@@ -35,7 +38,7 @@ jobs:
       -
         name: Configure Docker to log into GCloud
         run: |
-          gcloud auth configure-docker -q
+          gcloud auth configure-docker europe-west3-docker
       -
         name: Push
         id: docker_build
