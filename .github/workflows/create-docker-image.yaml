@@ -54,7 +54,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: europe-west3-docker.pkg.dev/${{ secrets.PROJECT_ID }}/botdiril-auth-backend:latest
+          tags: ${{ secrets.PROJECT_ID }}/baryonic/botdiril-auth-backend:latestdocker push
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
       -
