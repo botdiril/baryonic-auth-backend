@@ -1,12 +1,14 @@
 package com.baryonic.api.data.discord;
 
+import com.baryonic.api.data.login.ILoginInfo;
+
 public record DiscordLoginInfo(
-    int id,
-    String discordID,
-    String username,
-    String discriminator,
-    String avatar,
-    boolean bot
-)
+    String discordID
+) implements ILoginInfo
 {
+    @Override
+    public String getType()
+    {
+        return "discord";
+    }
 }

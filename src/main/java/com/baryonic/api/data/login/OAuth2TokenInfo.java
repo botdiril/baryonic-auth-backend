@@ -1,4 +1,4 @@
-package com.baryonic.api.data.discord;
+package com.baryonic.api.data.login;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

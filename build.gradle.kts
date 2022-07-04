@@ -61,10 +61,14 @@ dependencies {
 
     implementation("org.mariadb.jdbc", "mariadb-java-client", "3.0.6")
 
+    implementation("redis.clients", "jedis", "4.2.3")
+    implementation("org.bitbucket.b_c", "jose4j", "0.7.12")
+
     implementation(enforcedPlatform("io.helidon:helidon-dependencies:${helidonVersion}"))
     implementation("io.helidon.webserver:helidon-webserver")
     implementation("io.helidon.webclient:helidon-webclient")
     implementation("io.helidon.media:helidon-media-jackson")
+    implementation("io.helidon.media:helidon-media-multipart")
     implementation("io.helidon.health:helidon-health")
     implementation("io.helidon.security:helidon-security")
     implementation("io.helidon.security.integration:helidon-security-integration-webserver")
@@ -72,4 +76,5 @@ dependencies {
     implementation("io.helidon.metrics:helidon-metrics")
     implementation("io.helidon.dbclient:helidon-dbclient")
     implementation("io.helidon.dbclient:helidon-dbclient-jdbc")
+
 }

@@ -9,6 +9,8 @@ public record DiscordBasicUserInfo(
     String id,
     @JsonProperty("username")
     String username,
+    @JsonProperty("email")
+    String email,
     @JsonProperty("discriminator")
     String discriminator,
     @JsonProperty("avatar")
