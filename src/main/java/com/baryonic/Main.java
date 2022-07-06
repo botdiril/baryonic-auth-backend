@@ -68,7 +68,7 @@ public class Main
 
             try (var jedis = jedisPool.getResource())
             {
-                var key = "baroynic:public_keys:" + keyID;
+                var key = "baryonic:public_keys:" + keyID;
                 jedis.set(key, EcKeyUtil.pemEncode(jwk.getPublicKey()), SetParams.setParams().ex(60L * 60L * 24L * 90L));
             }
 

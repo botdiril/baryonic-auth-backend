@@ -62,7 +62,7 @@ public class JWTAuthProvider extends SynchronousProvider implements Authenticati
                     var keyID = jws.getKeyIdHeaderValue();
                     try (var jedis = this.pool.getResource())
                     {
-                        var key = "baroynic:public_keys:" + keyID;
+                        var key = "baryonic:public_keys:" + keyID;
                         return new EcKeyUtil().fromPemEncoded(jedis.get(key));
                     }
                     catch (Exception e)

@@ -82,7 +82,7 @@ public class LoginService implements Service
                                 .add("client_secret", this.discordPrivateKey)
                                 .add("grant_type", "authorization_code")
                                 .add("redirect_uri", this.discordRedirectUrl)
-                                .add("scope", "identify")
+                                .add("scope", "identify email")
                                 .add("code", loginInfo.code())
                                 .build();
 
