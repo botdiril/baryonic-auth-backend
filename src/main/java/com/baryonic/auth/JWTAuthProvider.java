@@ -7,11 +7,17 @@ import io.helidon.security.spi.SynchronousProvider;
 import io.helidon.security.util.TokenHandler;
 import org.jose4j.jwa.AlgorithmConstraints;
 import org.jose4j.jws.AlgorithmIdentifiers;
+import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.MalformedClaimException;
 import org.jose4j.jwt.consumer.InvalidJwtException;
 import org.jose4j.jwt.consumer.JwtConsumerBuilder;
+import org.jose4j.jwx.JsonWebStructure;
 import org.jose4j.keys.EcKeyUtil;
+import org.jose4j.lang.UnresolvableKeyException;
 import redis.clients.jedis.JedisPool;
+
+import java.security.Key;
+import java.util.List;
 
 public class JWTAuthProvider extends SynchronousProvider implements AuthenticationProvider, AuthorizationProvider
 {
@@ -48,6 +54,27 @@ public class JWTAuthProvider extends SynchronousProvider implements Authenticati
         }
     }
 
+    private Key resolveKey(JsonWebSignature jws, List<JsonWebStructure> nestingContext) throws UnresolvableKeyException
+    {
+        var keyID = jws.getKeyIdHeaderValue();
+        try (var jedis = this.pool.getResource())
+        {
+            var key = "baryonic:public_keys:" + keyID;
+            var pk = jedis.get(key);
+            if (pk == null)
+                throw new UnresolvableKeyException("Public key not found!");
+
+            try
+            {
+                return new EcKeyUtil().fromPemEncoded(pk);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     private AuthenticationResponse authenticateToken(String token)
     {
         try
@@ -58,18 +85,7 @@ public class JWTAuthProvider extends SynchronousProvider implements Authenticati
                 .setRequireSubject()
                 .setExpectedIssuer("baryonic.auth")
                 .setExpectedAudience("baryonic.auth")
-                .setVerificationKeyResolver((jws, nestingContext) -> {
-                    var keyID = jws.getKeyIdHeaderValue();
-                    try (var jedis = this.pool.getResource())
-                    {
-                        var key = "baryonic:public_keys:" + keyID;
-                        return new EcKeyUtil().fromPemEncoded(jedis.get(key));
-                    }
-                    catch (Exception e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .setVerificationKeyResolver(this::resolveKey)
                 .setJwsAlgorithmConstraints(AlgorithmConstraints.ConstraintType.PERMIT, AlgorithmIdentifiers.ECDSA_USING_P384_CURVE_AND_SHA384)
                 .build();
 
@@ -107,6 +123,9 @@ public class JWTAuthProvider extends SynchronousProvider implements Authenticati
         }
         catch (InvalidJwtException | MalformedClaimException e)
         {
+            if (e.getCause() instanceof UnresolvableKeyException)
+                return fail("Invalid or revoked JWT public key!");
+
             return fail("Invalid or broken JWT token!");
         }
     }
