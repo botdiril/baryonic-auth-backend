@@ -144,20 +144,19 @@ public class LoginService implements Service
                 row.column("us_username").as(String.class),
                 row.column("us_discriminator").as(String.class),
                 row.column("us_email").as(String.class),
-                UUID.fromString(row.column("us_avatar").as(String.class)),
+                row.column("us_avatar").as(UUID.class),
                 false))
             .defaultIfEmpty(() -> {
                 // User not found in database, create a new one.
-                         // Pull the user's avatar from the Discord API.
+                // Pull the user's avatar from the Discord API.
                 var avatarUUID = userInfo.avatar() == null ? null : UserService.pullFromDiscord(this.cloudflareAuth, userInfo.id(), userInfo.avatar());
-                         // Create a new account
-                // UUID handling was broken at the time of writing this, so we're using passing it as a string.
+                // Create a new account
                 var base = txn.query("""
                     INSERT INTO `b50_user`.`users` (`us_username`, `us_discriminator`, `us_email`, `us_avatar`)
                     VALUES (?, ?, ?, ?)
                     RETURNING `us_id`
                     """,
-                    userInfo.username(), userInfo.discriminator(), userInfo.email(), avatarUUID != null ? avatarUUID.toString() : null)
+                    userInfo.username(), userInfo.discriminator(), userInfo.email(), avatarUUID)
                     .first()
                     .await();
 

@@ -5,6 +5,7 @@ import com.baryonic.service.LoginService;
 import com.baryonic.service.UserService;
 import com.baryonic.util.BotdirilLog;
 import io.helidon.common.http.Http;
+import io.helidon.common.mapper.MapperManager;
 import io.helidon.config.Config;
 import io.helidon.config.ConfigSources;
 import io.helidon.config.spi.ConfigNode;
@@ -72,7 +73,13 @@ public class Main
                 jedis.set(key, EcKeyUtil.pemEncode(jwk.getPublicKey()), SetParams.setParams().ex(60L * 60L * 24L * 90L));
             }
 
+            var mappers = MapperManager.builder()
+                                       .addMapper(UUID::toString, UUID.class, String.class)
+                                       .addMapper(UUID::fromString, String.class, UUID.class)
+                                       .build();
+
             var dbClient = DbClient.builder(Config.create(ConfigSources.create(dbConfig)))
+                                   .mapperManager(mappers)
                                    .build();
 
             var corsSettings = CrossOriginConfig.builder()
